@@ -20,59 +20,18 @@
                             <!-- Table with stripped rows -->
                             <div class="datatable-wrapper datatable-loading no-footer sortable searchable fixed-columns">
                                 <div class="datatable-container">
-                                    <table class="table datatable datatable-table">
+                                    <table class="table mt-5  user-table  w-100 "
+                                        style=" border-collapse: separate;  border-spacing: 0 10px;" id="testimonies-table">
                                         <thead>
                                             <tr>
-                                                <th data-sortable="true" style="width: 5.625717566016074%;"><a
-                                                        href="#" class="datatable-sorter">#</a></th>
-                                                <th data-sortable="true" style="width: 28.013777267508612%;"><a
-                                                        href="#" class="datatable-sorter">Name</a></th>
-                                                <th data-sortable="true" style="width: 37.772675086107924%;"><a
-                                                        href="#" class="datatable-sorter">Position</a></th>
-                                                <th data-sortable="true" style="width: 9.299655568312284%;"><a
-                                                        href="#" class="datatable-sorter">Age</a></th>
-                                                <th data-sortable="true" style="width: 19.288174512055107%;"><a
-                                                        href="#" class="datatable-sorter">Start Date</a></th>
+                                                <th>S.No</th>
+                                                {{-- <th>Image</th> --}}
+                                                <th>Name</th>
+                                                <th>Parent Name</th>
+                                                <th>Action</th>
                                             </tr>
                                         </thead>
-                                        <tbody>
-                                            <tr data-index="0">
-                                                <td>1</td>
-                                                <td>Brandon Jacob</td>
-                                                <td>Designer</td>
-                                                <td>28</td>
-                                                <td>2016-05-25</td>
-                                            </tr>
-                                            <tr data-index="1">
-                                                <td>2</td>
-                                                <td>Bridie Kessler</td>
-                                                <td>Developer</td>
-                                                <td>35</td>
-                                                <td>2014-12-05</td>
-                                            </tr>
-                                            <tr data-index="2">
-                                                <td>3</td>
-                                                <td>Ashleigh Langosh</td>
-                                                <td>Finance</td>
-                                                <td>45</td>
-                                                <td>2011-08-12</td>
-                                            </tr>
-                                            <tr data-index="3">
-                                                <td>4</td>
-                                                <td>Angus Grady</td>
-                                                <td>HR</td>
-                                                <td>34</td>
-                                                <td>2012-06-11</td>
-                                            </tr>
-                                            <tr data-index="4">
-                                                <td>5</td>
-                                                <td>Raheem Lehner</td>
-                                                <td>Dynamic Division Officer</td>
-                                                <td>47</td>
-                                                <td>2011-04-19</td>
-                                            </tr>
-                                           
-                                        </tbody>
+
                                     </table>
                                 </div>
                             </div>
@@ -83,4 +42,95 @@
             </div>
         </section>
     </section>
+@endsection
+
+@section('customjs')
+    <script>
+        $(document).ready(function() {
+            console.log("checking");
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }
+            });
+            var table = $('#testimonies-table').DataTable({
+                "processing": true,
+                "serverSide": true,
+                "deferRender": true,
+                "ordering": false,
+                searchDelay: 3000,
+                "ajax": {
+                    url: "{{ route('categories.index') }}",
+                    type: 'GET',
+                    dataType: 'JSON'
+                },
+                "columns": [{
+                        data: 'DT_RowIndex',
+                        name: 'DT_RowIndex',
+                        searchable: false
+                    },
+                    // {
+                    //     data: 'image',
+                    //     name: 'image',
+                    // },
+                    {
+                        data: 'name',
+                        name: 'name',
+                    },
+                    {
+                        data: 'parent_id',
+                        name: 'parent_id',
+                    },
+                    {
+                        data: 'action',
+                        name: 'action',
+                    }
+
+                ],
+
+                "lengthMenu": [
+                    [5, 10, 20, 50, -1],
+                    [5, 10, 20, 50, "All"]
+                ],
+                "pagingType": "simple_numbers"
+
+            });
+
+
+
+
+
+            // ================DELETE BLOG==============================//
+            $('body').on('click', '.delButton', function() {
+                let slug = $(this).data('slug');
+                let url = '{{ url('admin/categories', '') }}' + '/' + slug;
+
+                if (confirm('Are you sure you want to delete it')) {
+                    $.ajax({
+                        url: url,
+                        method: 'DELETE',
+                        success: function(response) {
+                            // refresh the table after delete
+                            table.draw();
+                            // display the delete success message
+                            // toastify().success(response.success);
+
+                            Toastify({
+                                text: response.success,
+                                offset: {
+                                    x: 50, // horizontal axis - can be a number or a string indicating unity. eg: '2em'
+                                    y: 10 // vertical axis - can be a number or a string indicating unity. eg: '2em'
+                                },
+                            }).showToast();
+                        },
+                        error: function(error) {
+                            console.log(error);
+                        }
+                    });
+                }
+            });
+
+        });
+        // =====================================================================//
+    </script>
 @endsection
