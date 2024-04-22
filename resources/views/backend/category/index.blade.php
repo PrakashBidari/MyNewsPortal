@@ -16,7 +16,10 @@
                 <div class="col-lg-12">
                     <div class="card">
                         <div class="card-body">
-                            <h5 class="card-title">Category List</h5>
+                            <div class="d-flex justify-content-between mb-5 pt-4">
+                                <h5 class="card-title">Category List</h5>
+                                <a href="{{ route('categories.create') }}" class="text-end btn btn-primary" style="height: 40px;">Add Category</a>
+                            </div>
                             <!-- Table with stripped rows -->
                             <div class="datatable-wrapper datatable-loading no-footer sortable searchable fixed-columns">
                                 <div class="datatable-container">

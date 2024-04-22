@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use App\Services\CategoryService;
 use App\Http\Controllers\Controller;
 use Yajra\DataTables\Facades\DataTables;
+use App\Http\Requests\AddCategoryRequest;
 
 class CategoryController extends Controller
 {
@@ -39,6 +40,9 @@ class CategoryController extends Controller
                             </div>
                     ';
                         })
+                        ->editColumn('parent_id', function ($category) {
+                            return $category->parent ? $category->parent->name : '-';
+                        })
                         ->rawColumns(['action'])
                         ->make(true);
                 } catch (\Exception $e) {
@@ -51,6 +55,30 @@ class CategoryController extends Controller
         } catch (\Throwable $th) {
         }
     }
+
+
+    public function create(){
+        try{
+            $categories = Category::select('id', 'name', 'parent_id')
+                ->orderBy('name')
+                ->get();
+            return view("backend.category.create", compact("categories"));
+        }catch(\Throwable $th){
+
+        }
+    }
+
+    public function store(AddCategoryRequest $request){
+        try {
+            $validated_data = $request->validated();
+            $this->categoryService->add($validated_data);
+            return back()->with('success', 'Category Added');
+        } catch (\Throwable $th) {
+            // dd($th);
+            return back()->with('error', $th->getMessage());
+        }
+    }
+
 
     public function destroy(Category $category){
        try{

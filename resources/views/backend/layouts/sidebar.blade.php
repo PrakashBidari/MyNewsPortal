@@ -20,7 +20,7 @@
                     </a>
                 </li>
                 <li>
-                    <a href="#">
+                    <a href="{{ route("categories.create") }}">
                         <i class="bi bi-circle"></i><span>Add Category</span>
                     </a>
                 </li>
