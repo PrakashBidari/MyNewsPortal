@@ -16,7 +16,7 @@
 
                 <div class="card">
                     <div class="card-body">
-                        <h5 class="card-title">Vertical Form</h5>
+                        <h5 class="card-title">Add Category</h5>
 
                         <!-- Vertical Form -->
                         <form class="row g-3" action="{{ route('categories.store') }}" method="post"
@@ -67,8 +67,8 @@
             </div>
         </div>
     </section>
+
 @endsection
 
 @section('customjs')
-
 @endsection

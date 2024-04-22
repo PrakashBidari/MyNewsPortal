@@ -18,7 +18,8 @@
                         <div class="card-body">
                             <div class="d-flex justify-content-between mb-5 pt-4">
                                 <h5 class="card-title">Category List</h5>
-                                <a href="{{ route('categories.create') }}" class="text-end btn btn-primary" style="height: 40px;">Add Category</a>
+                                <a href="{{ route('categories.create') }}" class="text-end btn btn-primary"
+                                    style="height: 40px;">Add Category</a>
                             </div>
                             <!-- Table with stripped rows -->
                             <div class="datatable-wrapper datatable-loading no-footer sortable searchable fixed-columns">
@@ -118,12 +119,13 @@
                             // display the delete success message
                             // toastify().success(response.success);
 
+                            console.log(response.success);
+
                             Toastify({
                                 text: response.success,
-                                offset: {
-                                    x: 50, // horizontal axis - can be a number or a string indicating unity. eg: '2em'
-                                    y: 10 // vertical axis - can be a number or a string indicating unity. eg: '2em'
-                                },
+                                style: {
+                                    background: "linear-gradient(to right, #00b09b, #96c93d)",
+                                }
                             }).showToast();
                         },
                         error: function(error) {
