@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use Illuminate\Validation\Rule;
 use Illuminate\Foundation\Http\FormRequest;
 
 class AddCategoryRequest extends FormRequest
@@ -11,7 +12,7 @@ class AddCategoryRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -21,8 +22,18 @@ class AddCategoryRequest extends FormRequest
      */
     public function rules(): array
     {
-        return [
-            //
+        $rules = [
+            'parent_id' => ['nullable'],
+            'slug' => ['required', 'max:40'],
+            'image' => ['nullable', 'mimes:png,jpeg,jpg'],
         ];
+
+        if ($this->isMethod('put')) {
+            $rules['name'] = ['required', Rule::unique('categories')->ignore($this->category)];
+        } else {
+            $rules['name'] = ['required', 'max:35', 'unique:categories'];
+        }
+
+        return $rules;
     }
 }
