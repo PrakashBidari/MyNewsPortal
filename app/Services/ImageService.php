@@ -8,10 +8,9 @@ use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
-use Intervention\Image\ImageManager;
 use Illuminate\Support\Facades\Storage;
-// use Intervention\Image\Drivers\Gd\Driver;
-use Intervention\Image\Drivers\Imagick\Driver;
+use Intervention\Image\ImageManager;
+use Intervention\Image\Drivers\Gd\Driver;
 
 
 
@@ -44,8 +43,6 @@ class ImageService
                 $imageArr[] = $image_instance;
             }
 
-
-
             $model->image()->saveMany($imageArr);
         }
         return;
@@ -60,14 +57,11 @@ class ImageService
             $imageName = time() . '-' . $image->getClientOriginalName();
             $image = $manager->read($image);
             $image = $image->resize(200, 200);
-            dd($image);
             // $destinationPathThumbnail = storage_path('app/images/category/thumbnail/');
-            $destinationPathThumbnail = storage_path('app' . $directory . '/thumbnail');
+            $destinationPathThumbnail = storage_path('app' . $directory . '/thumbnail/');
             $image->save($destinationPathThumbnail . $imageName);
         }catch(\Exception $e){
-
             dd($e);
-
         }
     }
 
@@ -75,10 +69,12 @@ class ImageService
     {
         if (!Storage::exists($path)) {
             Storage::makeDirectory($path);
+            Storage::makeDirectory($path . '/thumbnail/');
         }
 
         return;
     }
+
     public function makeName($image)
     {
         $originalName = Str::replace(' ', '-', trim($image->getClientOriginalName()));

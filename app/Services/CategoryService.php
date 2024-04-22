@@ -42,4 +42,33 @@ class CategoryService{
         }
     }
 
+
+    public function update($validated_data, $category)
+    {
+        $images = [];
+
+        try {
+            $category->update($validated_data);
+
+
+            if (isset($validated_data['image'])) {
+                $images[0]['image'] =  $validated_data['image'];
+                if ($category->image) {
+                    $this->imageService->updateImages($category, $images, 'category', true);
+                } else {
+                    $this->imageService->addImages($category, $images, 'category');
+                }
+            }
+            return back();
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
+
+
+    public function destroy($category){
+        $category->delete();
+        $this->imageService->delete($category->image);
+    }
+
 }

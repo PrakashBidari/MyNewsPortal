@@ -53,6 +53,7 @@ class CategoryController extends Controller
 
             return view('backend.category.index');
         } catch (\Throwable $th) {
+            toastify()->error($th);
         }
     }
 
@@ -64,7 +65,8 @@ class CategoryController extends Controller
                 ->get();
             return view("backend.category.create", compact("categories"));
         }catch(\Throwable $th){
-
+            toastify()->error($th);
+            return;
         }
     }
 
@@ -72,22 +74,57 @@ class CategoryController extends Controller
         try {
             $validated_data = $request->validated();
             $this->categoryService->add($validated_data);
+
+            toastify()->success('Category Added Successful!');
             return back()->with('success', 'Category Added');
         } catch (\Throwable $th) {
             // dd($th);
+            toastify()->error($th->getMessage());
             return back()->with('error', $th->getMessage());
         }
     }
 
+    public function edit($slug){
+        try{
+            $category = Category::where('slug', $slug)->first();
+            $categories = Category::select('id', 'name', 'parent_id')
+                ->orderBy('name')
+                ->get();
+            return view("backend.category.edit", compact("category","categories"));
+        }catch(\Throwable $th){
+            toastify()->error($th);
+            return;
+        }
+    }
+
+    public function update(AddCategoryRequest $request, Category $category)
+    {
+        // dd($request);
+        try {
+            $this->categoryService->update($request->validated(), $category);
+            toastify()->success('Category successfully updated');
+            return redirect()->route('categories.index');
+        } catch (\Throwable $th) {
+            toastify()->error($th->getMessage());
+            return back();
+        }
+    }
+
+
+
+
 
     public function destroy(Category $category){
        try{
-        $category->delete();
+        $this->categoryService->destroy($category);
         return response()->json([
             'success' => 'Product Deleted Successfully'
         ], 201);
        }catch (\Throwable $e) {
-
+        // toastify()->error($e);
+        return response()->json([
+            'success' =>'Something Went Wrong'
+        ], 201);
        }
     }
 
