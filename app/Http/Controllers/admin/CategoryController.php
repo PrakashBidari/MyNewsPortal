@@ -7,6 +7,7 @@ use App\Models\Category;
 use Illuminate\Http\Request;
 use App\Services\CategoryService;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Storage;
 use Yajra\DataTables\Facades\DataTables;
 use App\Http\Requests\AddCategoryRequest;
 
@@ -28,6 +29,12 @@ class CategoryController extends Controller
                     $categories = $this->categoryService->index();
                     return DataTables::of($categories)
                         ->addIndexColumn()
+                        ->addColumn('image', function ($row) {
+                            if ($latestImage = $row->image) {
+                                $imageUrl = Storage::url($latestImage->url . '/' . $latestImage->saved_name);
+                                return '<img src="' . $imageUrl . '" style="height: 50px;width:50px;" alt="">';
+                            }
+                        })
                         ->addColumn('action', function ($row) {
                             // $deleteUrl = route('categories.destroy', ['category' => $row]);
                             $updateUrl = route('categories.edit', ['category' => $row]);
@@ -43,7 +50,7 @@ class CategoryController extends Controller
                         ->editColumn('parent_id', function ($category) {
                             return $category->parent ? $category->parent->name : '-';
                         })
-                        ->rawColumns(['action'])
+                        ->rawColumns(['action','image'])
                         ->make(true);
                 } catch (\Exception $e) {
                     // \Log::error('Error deleting product:' . $e->getMessage());
