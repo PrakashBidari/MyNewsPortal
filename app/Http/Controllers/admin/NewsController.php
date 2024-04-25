@@ -2,9 +2,12 @@
 
 namespace App\Http\Controllers\admin;
 
-use App\Http\Controllers\Controller;
-use App\Services\NewsService;
+use App\Models\Category;
 use Illuminate\Http\Request;
+use App\Services\NewsService;
+use App\Http\Controllers\Controller;
+use App\Http\Requests\AddNewsRequest;
+use App\Models\News;
 use Illuminate\Support\Facades\Storage;
 use Yajra\DataTables\Facades\DataTables;
 
@@ -38,7 +41,7 @@ class NewsController extends Controller
                         })
                         ->addColumn('action', function ($row) {
                             // $deleteUrl = route('categories.destroy', ['category' => $row]);
-                            $updateUrl = route('categories.edit', ['category' => $row]);
+                            $updateUrl = route('news.edit', ['news' => $row]);
                             return '
                             <div class="btn-group" role="group">
                                 <a href="' . $updateUrl . '" class="btn btn-info btn-sm mr-2 editButton me-2">
@@ -48,6 +51,9 @@ class NewsController extends Controller
                             </div>
                     ';
                         })
+                        ->editColumn('category', function ($news) {
+                            return Category::find($news->category)->name;
+                        })
                         ->rawColumns(['action','image'])
                         ->make(true);
                 } catch (\Exception $e) {
@@ -56,7 +62,7 @@ class NewsController extends Controller
                 }
             }
 
-            return view('backend.category.index');
+            return view('backend.news.index');
         } catch (\Throwable $th) {
             toastify()->error($th);
         }
@@ -67,15 +73,32 @@ class NewsController extends Controller
      */
     public function create()
     {
-        //
+        try{
+            $categories = Category::select('id', 'name')
+                ->orderBy('name')
+                ->get();
+            return view("backend.news.create", compact("categories"));
+        }catch(\Throwable $th){
+            toastify()->error($th);
+            return;
+        }
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(AddNewsRequest $request)
     {
-        //
+        try {
+            $validated_data = $request->validated();
+            $this->newsService->add($validated_data);
+            toastify()->success('News Added Successful!');
+            return back()->with('success', 'News Added');
+        } catch (\Throwable $th) {
+            // dd($th);
+            toastify()->error($th->getMessage());
+            return back()->with('error', $th->getMessage());
+        }
     }
 
     /**
@@ -105,8 +128,18 @@ class NewsController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(News $news)
     {
-        //
+        try{
+            $this->newsService->destroy($news);
+            return response()->json([
+                'success' => 'News Deleted Successfully'
+            ], 201);
+           }catch (\Throwable $e) {
+            // toastify()->error($e);
+            return response()->json([
+                'success' =>'Something Went Wrong'
+            ], 201);
+           }
     }
 }

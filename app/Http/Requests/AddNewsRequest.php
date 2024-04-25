@@ -22,9 +22,11 @@ class AddNewsRequest extends FormRequest
      */
     public function rules(): array
     {
+        
         $rules = [
             'title' => ['required', 'max:200'],
             'author' => ['required', 'max:200'],
+            'category' => ['required'],
             'description' => ['required'],
             'image' => ['nullable', 'mimes:jpg,jpeg,png', 'max:2048'],
             'view_no' => ['nullable'],

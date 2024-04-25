@@ -81,7 +81,6 @@ class CategoryController extends Controller
         try {
             $validated_data = $request->validated();
             $this->categoryService->add($validated_data);
-
             toastify()->success('Category Added Successful!');
             return back()->with('success', 'Category Added');
         } catch (\Throwable $th) {
@@ -125,7 +124,7 @@ class CategoryController extends Controller
        try{
         $this->categoryService->destroy($category);
         return response()->json([
-            'success' => 'Product Deleted Successfully'
+            'success' => 'Category Deleted Successfully'
         ], 201);
        }catch (\Throwable $e) {
         // toastify()->error($e);

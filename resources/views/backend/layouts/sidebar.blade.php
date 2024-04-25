@@ -30,9 +30,9 @@
         {{-- <li class="nav-heading">Pages</li> --}}
 
         <li class="nav-item">
-            <a class="nav-link collapsed" href="#">
+            <a class="nav-link collapsed" href="{{ route('news.index') }}">
                 <i class="bi bi-person"></i>
-                <span>Profile</span>
+                <span>News</span>
             </a>
         </li><!-- End Profile Page Nav -->
 

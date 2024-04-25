@@ -5,7 +5,7 @@
         <nav>
             <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href="index.html">Home</a></li>
-                <li class="breadcrumb-item active">Category</li>
+                <li class="breadcrumb-item active">News</li>
             </ol>
         </nav>
     </div><!-- End Page Title -->
@@ -17,9 +17,9 @@
                     <div class="card">
                         <div class="card-body">
                             <div class="d-flex justify-content-between mb-5 pt-4">
-                                <h5 class="card-title">Category List</h5>
-                                <a href="{{ route('categories.create') }}" class="text-end btn btn-primary"
-                                    style="height: 40px;">Add Category</a>
+                                <h5 class="card-title">News List</h5>
+                                <a href="{{ route('news.create') }}" class="text-end btn btn-primary"
+                                    style="height: 40px;">Add News</a>
                             </div>
                             <!-- Table with stripped rows -->
                             <div class="datatable-wrapper datatable-loading no-footer sortable searchable fixed-columns">
@@ -30,8 +30,9 @@
                                             <tr>
                                                 <th>S.No</th>
                                                 <th>Image</th>
-                                                <th>Name</th>
-                                                <th>Parent Name</th>
+                                                <th>Title</th>
+                                                <th>Category</th>
+                                                <th>Author</th>
                                                 <th>Action</th>
                                             </tr>
                                         </thead>
@@ -64,7 +65,7 @@
                 "ordering": false,
                 searchDelay: 3000,
                 "ajax": {
-                    url: "{{ route('categories.index') }}",
+                    url: "{{ route('news.index') }}",
                     type: 'GET',
                     dataType: 'JSON'
                 },
@@ -78,12 +79,16 @@
                         name: 'image',
                     },
                     {
-                        data: 'name',
-                        name: 'name',
+                        data: 'title',
+                        name: 'title',
                     },
                     {
-                        data: 'parent_id',
-                        name: 'parent_id',
+                        data: 'category',
+                        name: 'category',
+                    },
+                    {
+                        data: 'author',
+                        name: 'author',
                     },
                     {
                         data: 'action',
@@ -108,7 +113,7 @@
             // ================DELETE BLOG==============================//
             $('body').on('click', '.delButton', function() {
                 let slug = $(this).data('slug');
-                let url = '{{ url('admin/categories', '') }}' + '/' + slug;
+                let url = '{{ url('admin/news', '') }}' + '/' + slug;
 
                 if (confirm('Are you sure you want to delete it')) {
                     $.ajax({

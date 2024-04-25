@@ -16,6 +16,7 @@ return new class extends Migration
             $table->text('title');
             $table->text('slug');
             $table->string('author');
+            $table->bigInteger('category');
             $table->longText('description');
             $table->bigInteger('view_no')->nullable()->default(0);
             $table->timestamps();
